@@ -8,7 +8,7 @@ import reactor.core.publisher.Mono;
 
 public interface UserPhotoService {
 
-    Mono<UserPhotoResponse> uploadFile(Mono<FilePart> fileParts);
+    Mono<UserPhotoResponse> uploadUserPhoto(Mono<FilePart> fileParts);
 
-    Flux<Void> downloadFile(String idPhoto, ServerWebExchange exchange);
+    Flux<Void> downloadUserPhoto(String idPhoto, ServerWebExchange exchange);
 }

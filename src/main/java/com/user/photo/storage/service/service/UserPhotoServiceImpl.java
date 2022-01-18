@@ -21,7 +21,7 @@ public class UserPhotoServiceImpl implements UserPhotoService {
     private static final String ID_PHOTO_COLUMN_NAME = "_id";
 
     @Override
-    public Mono<UserPhotoResponse> uploadFile(Mono<FilePart> fileParts) {
+    public Mono<UserPhotoResponse> uploadUserPhoto(Mono<FilePart> fileParts) {
         return fileParts
                 .flatMap(part -> gridFsTemplate.store(part.content(), part.filename()))
                 .map(id -> UserPhotoResponse.builder()
@@ -30,7 +30,7 @@ public class UserPhotoServiceImpl implements UserPhotoService {
     }
 
     @Override
-    public Flux<Void> downloadFile(String idPhoto, ServerWebExchange exchange) {
+    public Flux<Void> downloadUserPhoto(String idPhoto, ServerWebExchange exchange) {
         return gridFsTemplate.findOne(query(where(ID_PHOTO_COLUMN_NAME).is(idPhoto)))
                 .log()
                 .flatMap(gridFsTemplate::getResource)

@@ -21,17 +21,17 @@ public class FileController {
     private final UserPhotoService userPhotoService;
 
     @PostMapping
-    public Mono<UserPhotoResponse> uploadFile(@RequestPart Mono<FilePart> fileParts) {
-        return userPhotoService.uploadFile(fileParts)
-                .doOnSuccess(success -> log.debug("uploadFile success"))
-                .doOnError(error -> log.error("uploadFile error"));
+    public Mono<UserPhotoResponse> uploadUserPhoto(@RequestPart Mono<FilePart> fileParts) {
+        return userPhotoService.uploadUserPhoto(fileParts)
+                .doOnSuccess(success -> log.debug("uploadUserPhoto success"))
+                .doOnError(error -> log.error("uploadUserPhoto error"));
     }
 
     @GetMapping("{idPhoto}")
-    public Flux<Void> downloadFile(@PathVariable("idPhoto") String idPhoto, ServerWebExchange exchange) {
-        return userPhotoService.downloadFile(idPhoto, exchange)
-                .doOnComplete(() -> log.debug("downloadFile success"))
-                .doOnError(error -> log.error("downloadFile error"));
+    public Flux<Void> downloadUserPhoto(@PathVariable("idPhoto") String idPhoto, ServerWebExchange exchange) {
+        return userPhotoService.downloadUserPhoto(idPhoto, exchange)
+                .doOnComplete(() -> log.debug("downloadUserPhoto success"))
+                .doOnError(error -> log.error("downloadUserPhoto error"));
     }
 
 }
