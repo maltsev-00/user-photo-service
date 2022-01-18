@@ -28,7 +28,7 @@ public class FileController {
     }
 
     @GetMapping("{idPhoto}")
-    public Flux<Void> downloadUserPhoto(@PathVariable("idPhoto") String idPhoto, ServerWebExchange exchange) {
+    public Flux<Void> getUserPhoto(@PathVariable("idPhoto") String idPhoto, ServerWebExchange exchange) {
         return userPhotoService.getUserPhoto(idPhoto, exchange)
                 .doOnComplete(() -> log.debug("getUserPhoto success"))
                 .doOnError(error -> log.error("getUserPhoto error"));

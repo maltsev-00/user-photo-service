@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -25,7 +26,8 @@ public class UserPhotoServiceImpl implements UserPhotoService {
 
     @Override
     public Mono<ObjectId> uploadUserPhoto(Mono<FilePart> fileParts) {
-        return fileParts.flatMap(part -> gridFsTemplate.store(part.content(), part.filename()));
+        return fileParts.flatMap(part -> gridFsTemplate.store(part.content(), part.filename()))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
@@ -33,6 +35,7 @@ public class UserPhotoServiceImpl implements UserPhotoService {
         return gridFsTemplate.findOne(query(where(ID_PHOTO_COLUMN_NAME).is(idPhoto)))
                 .switchIfEmpty(Mono.error(new NotFoundFileException(String.format(NOT_FOUND_FILE_EXCEPTION_MESSAGE, idPhoto))))
                 .flatMap(gridFsTemplate::getResource)
-                .flatMapMany(file -> exchange.getResponse().writeWith(file.getDownloadStream()));
+                .flatMapMany(file -> exchange.getResponse().writeWith(file.getDownloadStream()))
+                .subscribeOn(Schedulers.boundedElastic());
     }
 }
