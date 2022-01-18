@@ -1,7 +1,8 @@
 package com.user.photo.storage.service.service;
 
-import com.user.photo.storage.service.model.response.UserPhotoResponse;
+import com.user.photo.storage.service.exception.NotFoundFileException;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.gridfs.ReactiveGridFsTemplate;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
@@ -18,21 +19,20 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 public class UserPhotoServiceImpl implements UserPhotoService {
 
     private final ReactiveGridFsTemplate gridFsTemplate;
+
     private static final String ID_PHOTO_COLUMN_NAME = "_id";
+    private static final String NOT_FOUND_FILE_EXCEPTION_MESSAGE = "Not found file with id: %s";
 
     @Override
-    public Mono<UserPhotoResponse> uploadUserPhoto(Mono<FilePart> fileParts) {
-        return fileParts
-                .flatMap(part -> gridFsTemplate.store(part.content(), part.filename()))
-                .map(id -> UserPhotoResponse.builder()
-                        .idUserPhoto(id)
-                        .build());
+    public Mono<ObjectId> uploadUserPhoto(Mono<FilePart> fileParts) {
+        return fileParts.flatMap(part -> gridFsTemplate.store(part.content(), part.filename()));
     }
 
     @Override
-    public Flux<Void> downloadUserPhoto(String idPhoto, ServerWebExchange exchange) {
+    public Flux<Void> getUserPhoto(String idPhoto, ServerWebExchange exchange) {
         return gridFsTemplate.findOne(query(where(ID_PHOTO_COLUMN_NAME).is(idPhoto)))
+                .switchIfEmpty(Mono.error(new NotFoundFileException(String.format(NOT_FOUND_FILE_EXCEPTION_MESSAGE, idPhoto))))
                 .flatMap(gridFsTemplate::getResource)
-                .flatMapMany(r -> exchange.getResponse().writeWith(r.getDownloadStream()));
+                .flatMapMany(file -> exchange.getResponse().writeWith(file.getDownloadStream()));
     }
 }

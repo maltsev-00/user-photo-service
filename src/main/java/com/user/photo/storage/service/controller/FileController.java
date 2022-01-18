@@ -1,10 +1,10 @@
 package com.user.photo.storage.service.controller;
 
 
-import com.user.photo.storage.service.model.response.UserPhotoResponse;
 import com.user.photo.storage.service.service.UserPhotoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerWebExchange;
@@ -21,7 +21,7 @@ public class FileController {
     private final UserPhotoService userPhotoService;
 
     @PostMapping
-    public Mono<UserPhotoResponse> uploadUserPhoto(@RequestPart(name = "photo") Mono<FilePart> photoFile) {
+    public Mono<ObjectId> uploadUserPhoto(@RequestPart(name = "photo") Mono<FilePart> photoFile) {
         return userPhotoService.uploadUserPhoto(photoFile)
                 .doOnSuccess(success -> log.debug("uploadUserPhoto success"))
                 .doOnError(error -> log.error("uploadUserPhoto error"));
@@ -29,9 +29,9 @@ public class FileController {
 
     @GetMapping("{idPhoto}")
     public Flux<Void> downloadUserPhoto(@PathVariable("idPhoto") String idPhoto, ServerWebExchange exchange) {
-        return userPhotoService.downloadUserPhoto(idPhoto, exchange)
-                .doOnComplete(() -> log.debug("downloadUserPhoto success"))
-                .doOnError(error -> log.error("downloadUserPhoto error"));
+        return userPhotoService.getUserPhoto(idPhoto, exchange)
+                .doOnComplete(() -> log.debug("getUserPhoto success"))
+                .doOnError(error -> log.error("getUserPhoto error"));
     }
 
 }
