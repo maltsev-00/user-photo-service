@@ -21,8 +21,8 @@ public class FileController {
     private final UserPhotoService userPhotoService;
 
     @PostMapping
-    public Mono<UserPhotoResponse> uploadUserPhoto(@RequestPart Mono<FilePart> fileParts) {
-        return userPhotoService.uploadUserPhoto(fileParts)
+    public Mono<UserPhotoResponse> uploadUserPhoto(@RequestPart(name = "photo") Mono<FilePart> photoFile) {
+        return userPhotoService.uploadUserPhoto(photoFile)
                 .doOnSuccess(success -> log.debug("uploadUserPhoto success"))
                 .doOnError(error -> log.error("uploadUserPhoto error"));
     }

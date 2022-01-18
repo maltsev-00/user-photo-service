@@ -32,7 +32,6 @@ public class UserPhotoServiceImpl implements UserPhotoService {
     @Override
     public Flux<Void> downloadUserPhoto(String idPhoto, ServerWebExchange exchange) {
         return gridFsTemplate.findOne(query(where(ID_PHOTO_COLUMN_NAME).is(idPhoto)))
-                .log()
                 .flatMap(gridFsTemplate::getResource)
                 .flatMapMany(r -> exchange.getResponse().writeWith(r.getDownloadStream()));
     }
