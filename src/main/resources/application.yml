@@ -1,3 +1,6 @@
+server:
+  port: 8082
+
 spring:
   data:
     mongodb:
@@ -8,7 +11,7 @@ spring:
   boot:
     admin:
       client:
-        url: ${ADMIN_CLIENT_URL:http://localhost:8080}
+        url: ${ADMIN_CLIENT_URL:http://localhost:8082}
   servlet:
     multipart:
       enabled: true

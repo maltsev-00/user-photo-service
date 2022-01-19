@@ -25,7 +25,8 @@ public class UserPhotoServiceImpl implements UserPhotoService {
 
     @Override
     public Mono<UserPhotoResponse> uploadUserPhoto(Mono<FilePart> fileParts) {
-        return fileParts.flatMap(part -> gridFsTemplate.store(part.content(), part.filename()))
+        return fileParts
+                .flatMap(part -> gridFsTemplate.store(part.content(), part.filename()))
                 .map(idPhoto -> UserPhotoResponse.builder()
                         .idUserPhoto(idPhoto.toHexString())
                         .build())
