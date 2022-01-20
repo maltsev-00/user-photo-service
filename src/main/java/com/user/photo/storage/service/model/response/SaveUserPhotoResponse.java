@@ -6,6 +6,6 @@ import lombok.Value;
 
 @Value
 @Builder
-public class UserPhotoResponse {
+public class SaveUserPhotoResponse {
     String idUserPhoto;
 }
